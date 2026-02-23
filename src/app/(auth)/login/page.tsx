@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteOrigin } from "@/lib/site-url";
 import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 
@@ -14,10 +15,7 @@ export default function LoginPage() {
   const handleOAuth = async (provider: "google" | "github") => {
     setLoading(provider);
     setMessage("");
-    const origin =
-      (typeof window !== "undefined" && window.location?.origin) ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3001";
+    const origin = getSiteOrigin();
     const redirectTo =
       provider === "github"
         ? `${origin}/auth/callback?next=/dashboard&github_import=1`

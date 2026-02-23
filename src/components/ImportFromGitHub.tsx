@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchGitHubRepos, getGitHubImportReposFromPending, importReposFromGitHub } from "@/lib/actions/github";
+import { getSiteOrigin } from "@/lib/site-url";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { GitHubRepo } from "@/types";
@@ -100,10 +101,7 @@ export function ImportFromGitHub({
 
   const handleSignInWithGitHub = async () => {
     const supabase = createClient();
-    const origin =
-      (typeof window !== "undefined" && window.location?.origin) ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3001";
+    const origin = getSiteOrigin();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
