@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { updateProject, deleteProject } from "@/lib/actions/projects";
 import { useTranslations } from "next-intl";
-import type { Project } from "@/types";
+import type { Project, Activity } from "@/types";
 import type { ProjectStatus } from "@/types";
 import { computeIceScore, ICE_VALUES, roundToNearestIceValue, scoreToLevel } from "@/types";
 
@@ -20,9 +20,11 @@ const STATUSES: ProjectStatus[] = ["idea", "building", "blocked", "launched"];
 
 export function ProjectCard({
   project,
+  activities = [],
   onUpdate,
 }: {
   project: Project;
+  activities?: Activity[];
   onUpdate?: () => void;
 }) {
   const router = useRouter();
@@ -47,6 +49,18 @@ export function ProjectCard({
   const [iceOpen, setIceOpen] = useState(false);
   const iceTriggerRef = useRef<HTMLButtonElement>(null);
   const statusNoteInputRef = useRef<HTMLInputElement>(null);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const daysAgo = (n: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0, 10);
+  };
+  const rangeDays = 28;
+  const rangeStart = daysAgo(rangeDays - 1);
+  const recentActivityDates = new Set(
+    activities.filter((a) => a.date >= rangeStart && a.date <= today).map((a) => a.date)
+  );
 
   useEffect(() => {
     if (statusNoteEditing) statusNoteInputRef.current?.focus();
@@ -228,24 +242,42 @@ export function ProjectCard({
             <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
               {/* ICE - 클릭 시 드롭다운에서 각 항목 선택 */}
               <div className="relative">
-                <button
-                  ref={iceTriggerRef}
-                  type="button"
-                  onClick={() => setIceOpen((o) => !o)}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-zinc-700/80 text-zinc-200 hover:bg-zinc-600/80 transition-colors cursor-pointer"
-                  title={t("iceTooltip")}
-                >
-                  ICE {(() => {
-                    const s = computeIceScore({
-                      ...project,
-                      ice_impact: iceImpact,
-                      ice_confidence: iceConfidence,
-                      ice_ease: iceEase,
-                    });
-                    return s != null ? s.toFixed(1) : "—";
-                  })()}
-                  <span className="text-zinc-500 text-[10px]">▾</span>
-                </button>
+                {(() => {
+                  const iceScore = computeIceScore({
+                    ...project,
+                    ice_impact: iceImpact,
+                    ice_confidence: iceConfidence,
+                    ice_ease: iceEase,
+                  });
+                  const isStrong = iceScore != null && iceScore >= 7;
+                  return (
+                    <span
+                      className={isStrong ? "inline-block rounded p-[1px]" : ""}
+                      style={
+                        isStrong
+                          ? {
+                              background: "linear-gradient(90deg, #b91c1c, #c2410c, #a16207, #15803d, #1d4ed8, #6d28d9)",
+                            }
+                          : undefined
+                      }
+                    >
+                      <button
+                        ref={iceTriggerRef}
+                        type="button"
+                        onClick={() => setIceOpen((o) => !o)}
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-colors cursor-pointer ${
+                          isStrong
+                            ? "bg-zinc-900 text-zinc-100 hover:bg-zinc-800"
+                            : "bg-zinc-700/80 text-zinc-200 hover:bg-zinc-600/80"
+                        }`}
+                        title={t("iceTooltip")}
+                      >
+                        ICE {iceScore != null ? iceScore.toFixed(1) : "—"}
+                        <span className="text-zinc-500 text-[10px]">▾</span>
+                      </button>
+                    </span>
+                  );
+                })()}
                 {iceOpen &&
                   typeof document !== "undefined" &&
                   createPortal(
@@ -380,6 +412,28 @@ export function ProjectCard({
               {t("statusNoteAdd")}
             </button>
           )}
+          {/* 최근 활동 (4주) */}
+          <div className="mt-3 pt-3 border-t border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-xs text-zinc-500">{t("recentActivity")}</span>
+              <span className="text-[10px] text-zinc-600">({t("recentActivity4w")})</span>
+            </div>
+            <div className="flex gap-0.5 flex-wrap">
+              {Array.from({ length: rangeDays }, (_, i) => {
+                const d = daysAgo(rangeDays - 1 - i);
+                const hasActivity = recentActivityDates.has(d);
+                return (
+                  <div
+                    key={d}
+                    className={`w-2.5 h-2.5 rounded-sm shrink-0 ${
+                      hasActivity ? "bg-emerald-500/80" : "bg-zinc-800/80"
+                    }`}
+                    title={`${d}${hasActivity ? " ✓" : ""}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
           <div className="flex flex-wrap items-center gap-2 mt-3">
             <button
               type="button"

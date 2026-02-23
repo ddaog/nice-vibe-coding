@@ -41,9 +41,12 @@ Supabase 대시보드에서:
 
 - [ ] **Authentication → Providers** → Google, GitHub 활성화 및 Client ID/Secret 설정
   - GitHub scope `repo`는 로그인 시 클라이언트에서 자동 요청됨 (별도 설정 불필요)
-- [ ] **Authentication → URL Configuration** → Redirect URLs에 추가:
-  - `http://localhost:3001/auth/callback`
-  - (배포 시) `https://your-domain.com/auth/callback`
+- [ ] **Authentication → URL Configuration**:
+  - **Site URL**: 프로덕션 사용 시 `https://nice-vibe-coding.vercel.app`로 설정 (로컬만 쓰면 `http://localhost:3001`)
+  - **Redirect URLs**에 추가:
+    - `http://localhost:3001/auth/callback` (로컬)
+    - `https://nice-vibe-coding.vercel.app/auth/callback` (프로덕션)
+    - `https://nice-vibe-coding.vercel.app/**`
 
 ---
 

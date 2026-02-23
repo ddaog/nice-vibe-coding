@@ -25,7 +25,10 @@
     "logActivity": "활동 기록",
     "projects": "프로젝트",
     "activityDistribution": "활동 분포",
-    "sortByIce": "ICE 기준 정렬"
+    "sortByIce": "ICE 순",
+    "sortByRecent": "최근 활동순",
+    "sortByActive": "최다 활동순",
+    "allProjects": "전체 프로젝트"
   },
   "heatmap": {
     "less": "적음",
@@ -77,6 +80,8 @@
     "edit": "수정",
     "delete": "삭제",
     "logActivity": "활동 기록",
+    "recentActivity": "최근 활동",
+    "recentActivity4w": "4주",
     "deleteConfirm": "이 프로젝트를 삭제할까요?",
     "iceScores": "ICE 우선순위",
     "iceTooltip": "기대수익·확신·난이도 5단계(2~10). ICE가 10에 가까울수록 먼저 실행해보기 좋은 프로젝트입니다."

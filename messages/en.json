@@ -25,7 +25,10 @@
     "logActivity": "Log Activity",
     "projects": "Projects",
     "activityDistribution": "Activity Distribution",
-    "sortByIce": "Sort by ICE"
+    "sortByIce": "By ICE",
+    "sortByRecent": "Recent activity",
+    "sortByActive": "Most active",
+    "allProjects": "All projects"
   },
   "heatmap": {
     "less": "Less",
@@ -77,6 +80,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "logActivity": "Log activity",
+    "recentActivity": "Recent activity",
+    "recentActivity4w": "4w",
     "deleteConfirm": "Delete this project?",
     "iceScores": "ICE Priority",
     "iceTooltip": "5 levels (2–10) for Expected Revenue, Confidence, Ease. The closer ICE is to 10, the better the project to try first."

@@ -25,7 +25,10 @@
     "logActivity": "活動を記録",
     "projects": "プロジェクト",
     "activityDistribution": "活動分布",
-    "sortByIce": "ICEで並び替え"
+    "sortByIce": "ICE順",
+    "sortByRecent": "最近の活動順",
+    "sortByActive": "活動数順",
+    "allProjects": "全プロジェクト"
   },
   "heatmap": {
     "less": "少ない",
@@ -77,6 +80,8 @@
     "edit": "編集",
     "delete": "削除",
     "logActivity": "活動記録",
+    "recentActivity": "最近の活動",
+    "recentActivity4w": "4週間",
     "deleteConfirm": "このプロジェクトを削除しますか？",
     "iceScores": "ICE優先度",
     "iceTooltip": "期待収益・確信・容易さを5段階(2〜10)。ICEが10に近いほど、まず実行してみるのに良いプロジェクトです。"

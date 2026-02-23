@@ -33,7 +33,6 @@ export function LogActivityForm({
     initialDate ?? new Date().toISOString().slice(0, 10)
   );
   const [type, setType] = useState<ActivityType>("dev");
-  const [intensity, setIntensity] = useState(3);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +48,7 @@ export function LogActivityForm({
     if (!projectId) return;
     setLoading(true);
     try {
-      await logActivity(projectId, date, type, intensity, note || undefined);
+      await logActivity(projectId, date, type, 1, note || undefined);
       setNote("");
       onSuccess?.();
     } catch (err) {
@@ -97,20 +96,6 @@ export function LogActivityForm({
           {ACTIVITY_TYPES.map((activityType) => (
             <option key={activityType} value={activityType}>
               {t(activityType)}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-zinc-400">{t("intensity")}</label>
-        <select
-          value={intensity}
-          onChange={(e) => setIntensity(Number(e.target.value))}
-          className="px-3 py-2 rounded-lg bg-zinc-800/80 border border-zinc-700 text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-        >
-          {[1, 2, 3, 4, 5].map((n) => (
-            <option key={n} value={n}>
-              {n}
             </option>
           ))}
         </select>

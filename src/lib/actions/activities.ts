@@ -4,6 +4,33 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import type { ActivityType } from "@/types";
 
+export async function getActivityStatsByProject(): Promise<
+  { projectId: string; lastDate: string; count: number }[]
+> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("activities_nvc")
+    .select("project_id, date")
+    .eq("user_id", user.id);
+  if (error) return [];
+
+  const byProject = new Map<string, { lastDate: string; count: number }>();
+  for (const row of data ?? []) {
+    const existing = byProject.get(row.project_id);
+    const lastDate = !existing || row.date > existing.lastDate ? row.date : existing.lastDate;
+    const count = (existing?.count ?? 0) + 1;
+    byProject.set(row.project_id, { lastDate, count });
+  }
+  return Array.from(byProject.entries()).map(([projectId, { lastDate, count }]) => ({
+    projectId,
+    lastDate,
+    count,
+  }));
+}
+
 export async function getActivities(filters?: {
   projectId?: string;
   type?: ActivityType;

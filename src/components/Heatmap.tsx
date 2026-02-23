@@ -329,10 +329,9 @@ export function Heatmap({
                         }}
                       >
                         <div className="font-medium">{cell.date} ({weekday})</div>
-                        {cell.count > 0 ? (
+                            {cell.count > 0 ? (
                           <div className="text-zinc-300 mt-0.5">
                             {cell.count} {cell.count === 1 ? t("activity") : t("activities")}
-                            {cell.intensity > 0 && ` · ${t("intensity")} ${cell.intensity}`}
                             {activeTypes.length > 0 && (
                               <div className="mt-0.5">{activeTypes.map((type) => tLog(type)).join(", ")}</div>
                             )}

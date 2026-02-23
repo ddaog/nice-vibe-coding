@@ -39,7 +39,6 @@ export function DayDetailModal({
   const locale = useLocale();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editType, setEditType] = useState<ActivityType>("dev");
-  const [editIntensity, setEditIntensity] = useState(3);
   const [editNote, setEditNote] = useState("");
   const weekdays = locale.startsWith("ja") ? WEEKDAY_JA : locale.startsWith("en") ? WEEKDAY_EN : WEEKDAY_KO;
   const d = new Date(date + "T12:00:00");
@@ -89,15 +88,6 @@ export function DayDetailModal({
                           <option key={type} value={type}>{t(type)}</option>
                         ))}
                       </select>
-                      <select
-                        value={editIntensity}
-                        onChange={(e) => setEditIntensity(Number(e.target.value))}
-                        className="w-full px-2 py-1 rounded bg-zinc-700 border border-zinc-600 text-zinc-200 text-xs"
-                      >
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
                       <input
                         value={editNote}
                         onChange={(e) => setEditNote(e.target.value)}
@@ -108,7 +98,7 @@ export function DayDetailModal({
                         <button
                           type="button"
                           onClick={async () => {
-                            await updateActivity(a.id, { type: editType, intensity: editIntensity, note: editNote || null });
+                            await updateActivity(a.id, { type: editType, note: editNote || null });
                             setEditingId(null);
                             router.refresh();
                           }}
@@ -135,7 +125,6 @@ export function DayDetailModal({
                         <span className="text-zinc-300">{projectTitles[a.project_id] ?? a.project_id}</span>
                         <span className="text-zinc-500 mx-1">·</span>
                         <span className="text-zinc-400">{t(a.type)}</span>
-                        <span className="text-zinc-500 ml-1">({tHeatmap("intensity")} {a.intensity})</span>
                         {a.note && <p className="text-zinc-500 text-xs mt-0.5">{a.note}</p>}
                       </div>
                       <div className="flex gap-1 shrink-0">
@@ -144,7 +133,6 @@ export function DayDetailModal({
                           onClick={() => {
                             setEditingId(a.id);
                             setEditType(a.type);
-                            setEditIntensity(a.intensity);
                             setEditNote(a.note ?? "");
                           }}
                           className="p-1 rounded text-zinc-400 hover:bg-zinc-600 hover:text-zinc-200"

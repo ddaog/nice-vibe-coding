@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getProjects } from "@/lib/actions/projects";
-import { getActivities } from "@/lib/actions/activities";
+import { getProjects, type ProjectSort } from "@/lib/actions/projects";
+import { getActivities, getActivityStatsByProject } from "@/lib/actions/activities";
 import {
   computeDayActivities,
   computeStats,
@@ -17,18 +17,22 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { ImportFromGitHub } from "@/components/ImportFromGitHub";
 import { ProjectSortToggle } from "@/components/ProjectSortToggle";
+import { ProjectFilterSelect } from "@/components/ProjectFilterSelect";
 import Link from "next/link";
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string }>;
+  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string; projectFilter?: string }>;
 }) {
   const params = await searchParams;
   const initialDate = params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : undefined;
   const initialProjectId = params.project ?? undefined;
   const viewOffset = parseInt(params.view ?? "0", 10) || 0;
-  const sortByIce = params.sort === "ice";
+  const sortParam = (params.sort === "ice" || params.sort === "recent" || params.sort === "active")
+    ? params.sort
+    : "recent";
+  const projectFilter = params.projectFilter ?? undefined;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -37,15 +41,18 @@ export default async function DashboardPage({
   const tCommon = await getTranslations("common");
   const tLog = await getTranslations("logActivity");
 
-  const [projects, activities] = await Promise.all([
-    getProjects(sortByIce),
+  const [activities, activityStats] = await Promise.all([
     getActivities(),
+    getActivityStatsByProject(),
   ]);
+  const projects = await getProjects(sortParam as ProjectSort, activityStats);
 
   const { start, end, canGoPrev, canGoNext } = getDateRangeWithView(viewOffset, user?.created_at);
-  const filteredActivities = activities.filter(
-    (a) => a.date >= start && a.date <= end
-  );
+  const filteredActivities = activities.filter((a) => {
+    if (a.date < start || a.date > end) return false;
+    if (projectFilter) return a.project_id === projectFilter;
+    return true;
+  });
   const dayMap = computeDayActivities(filteredActivities);
   const projectTitles: Record<string, string> = Object.fromEntries(
     projects.map((p) => [p.id, p.title])
@@ -121,21 +128,33 @@ export default async function DashboardPage({
         </section>
 
         <section>
-          <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <h2 className="text-xl font-semibold text-zinc-100">
               {t("contributionGraph")}
             </h2>
-            <HeatmapNav
-              viewOffset={viewOffset}
-              canGoPrev={canGoPrev}
-              canGoNext={canGoNext}
-              startDate={start}
-              endDate={end}
-              otherParams={[
-                sortByIce && "sort=ice",
-                initialDate && `date=${initialDate}`,
-              ].filter(Boolean).join("&")}
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              <ProjectFilterSelect
+                projects={projects}
+                projectTitles={projectTitles}
+                selectedId={projectFilter}
+                otherParams={[
+                  sortParam !== "recent" && `sort=${sortParam}`,
+                  initialDate && `date=${initialDate}`,
+                ].filter(Boolean).join("&")}
+              />
+              <HeatmapNav
+                viewOffset={viewOffset}
+                canGoPrev={canGoPrev}
+                canGoNext={canGoNext}
+                startDate={start}
+                endDate={end}
+                otherParams={[
+                  sortParam !== "recent" && `sort=${sortParam}`,
+                  initialDate && `date=${initialDate}`,
+                  projectFilter && `projectFilter=${projectFilter}`,
+                ].filter(Boolean).join("&")}
+              />
+            </div>
           </div>
           <HeatmapSection
             dayActivities={Object.fromEntries(dayMap)}
@@ -163,11 +182,15 @@ export default async function DashboardPage({
               <ImportFromGitHub initialGitHubImport={params.github_import === "1"} />
             </div>
           </div>
-          <CreateProjectForm />
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 overflow-visible">
+          <div className="grid gap-4 sm:grid-cols-2 overflow-visible">
             {projects.map((p) => (
-              <ProjectCard key={p.id} project={p} />
+              <ProjectCard
+                key={p.id}
+                project={p}
+                activities={activities.filter((a) => a.project_id === p.id)}
+              />
             ))}
+            <CreateProjectForm />
           </div>
         </section>
 
