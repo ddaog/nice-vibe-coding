@@ -7,7 +7,7 @@ import { updateProject, deleteProject } from "@/lib/actions/projects";
 import { useTranslations } from "next-intl";
 import type { Project } from "@/types";
 import type { ProjectStatus } from "@/types";
-import { computeIceScore } from "@/types";
+import { computeIceScore, ICE_VALUES, roundToNearestIceValue, scoreToLevel } from "@/types";
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
   idea: "bg-zinc-600",
@@ -34,13 +34,13 @@ export function ProjectCard({
   const [description, setDescription] = useState(project.description ?? "");
   const [status, setStatus] = useState<ProjectStatus>(project.status);
   const [iceImpact, setIceImpact] = useState<number | null>(
-    project.ice_impact != null ? Math.round(project.ice_impact * 10) / 10 : null
+    project.ice_impact != null ? roundToNearestIceValue(project.ice_impact) : null
   );
   const [iceConfidence, setIceConfidence] = useState<number | null>(
-    project.ice_confidence != null ? Math.round(project.ice_confidence * 10) / 10 : null
+    project.ice_confidence != null ? roundToNearestIceValue(project.ice_confidence) : null
   );
   const [iceEase, setIceEase] = useState<number | null>(
-    project.ice_ease != null ? Math.round(project.ice_ease * 10) / 10 : null
+    project.ice_ease != null ? roundToNearestIceValue(project.ice_ease) : null
   );
   const [statusNote, setStatusNote] = useState(project.status_note ?? "");
   const [statusNoteEditing, setStatusNoteEditing] = useState(false);
@@ -57,9 +57,9 @@ export function ProjectCard({
     setDescription(project.description ?? "");
     setStatus(project.status);
     setStatusNote(project.status_note ?? "");
-    setIceImpact(project.ice_impact != null ? Math.round(project.ice_impact * 10) / 10 : null);
-    setIceConfidence(project.ice_confidence != null ? Math.round(project.ice_confidence * 10) / 10 : null);
-    setIceEase(project.ice_ease != null ? Math.round(project.ice_ease * 10) / 10 : null);
+    setIceImpact(project.ice_impact != null ? roundToNearestIceValue(project.ice_impact) : null);
+    setIceConfidence(project.ice_confidence != null ? roundToNearestIceValue(project.ice_confidence) : null);
+    setIceEase(project.ice_ease != null ? roundToNearestIceValue(project.ice_ease) : null);
   }, [project.id, project.title, project.description, project.status, project.status_note, project.ice_impact, project.ice_confidence, project.ice_ease]);
 
   const handleSave = async () => {
@@ -162,42 +162,42 @@ export function ProjectCard({
             <div className="grid grid-cols-3 gap-2">
               <div>
                 <label className="text-xs text-zinc-500">{tIce("impact")}</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  step={0.1}
+                <select
                   value={iceImpact ?? ""}
-                  onChange={(e) => setIceImpact(e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null)}
-                  placeholder="—"
+                  onChange={(e) => setIceImpact(e.target.value ? Number(e.target.value) : null)}
                   className="mt-0.5 w-full px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs"
-                />
+                >
+                  <option value="">—</option>
+                  {ICE_VALUES.map((n) => (
+                    <option key={n} value={n}>{tIce(scoreToLevel(n, false))}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-xs text-zinc-500">{tIce("confidence")}</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  step={0.1}
+                <select
                   value={iceConfidence ?? ""}
-                  onChange={(e) => setIceConfidence(e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null)}
-                  placeholder="—"
+                  onChange={(e) => setIceConfidence(e.target.value ? Number(e.target.value) : null)}
                   className="mt-0.5 w-full px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs"
-                />
+                >
+                  <option value="">—</option>
+                  {ICE_VALUES.map((n) => (
+                    <option key={n} value={n}>{tIce(scoreToLevel(n, false))}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-xs text-zinc-500">{tIce("ease")}</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  step={0.1}
+                <select
                   value={iceEase ?? ""}
-                  onChange={(e) => setIceEase(e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null)}
-                  placeholder="—"
+                  onChange={(e) => setIceEase(e.target.value ? Number(e.target.value) : null)}
                   className="mt-0.5 w-full px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs"
-                />
+                >
+                  <option value="">—</option>
+                  {ICE_VALUES.map((n) => (
+                    <option key={n} value={n}>{tIce(scoreToLevel(n, true))}</option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -235,12 +235,15 @@ export function ProjectCard({
                   className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-zinc-700/80 text-zinc-200 hover:bg-zinc-600/80 transition-colors cursor-pointer"
                   title={t("iceTooltip")}
                 >
-                  ICE {computeIceScore({
-                    ...project,
-                    ice_impact: iceImpact,
-                    ice_confidence: iceConfidence,
-                    ice_ease: iceEase,
-                  }) ?? "—"}
+                  ICE {(() => {
+                    const s = computeIceScore({
+                      ...project,
+                      ice_impact: iceImpact,
+                      ice_confidence: iceConfidence,
+                      ice_ease: iceEase,
+                    });
+                    return s != null ? s.toFixed(1) : "—";
+                  })()}
                   <span className="text-zinc-500 text-[10px]">▾</span>
                 </button>
                 {iceOpen &&
@@ -263,51 +266,51 @@ export function ProjectCard({
                         <div className="grid grid-cols-1 gap-2">
                           <div>
                             <label className="text-[10px] text-zinc-500">{tIce("impact")}</label>
-                            <input
-                              type="number"
-                              min={1}
-                              max={10}
-                              step={0.1}
+                            <select
                               value={iceImpact ?? ""}
                               onChange={(e) => {
-                                const v = e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null;
+                                const v = e.target.value ? Number(e.target.value) : null;
                                 handleIceChange(v, iceConfidence, iceEase);
                               }}
-                              placeholder="—"
                               className="mt-0.5 w-full px-2 py-1 rounded text-xs bg-zinc-700 border border-zinc-600 text-zinc-200"
-                            />
+                            >
+                              <option value="">—</option>
+                              {ICE_VALUES.map((n) => (
+                                <option key={n} value={n}>{tIce(scoreToLevel(n, false))}</option>
+                              ))}
+                            </select>
                           </div>
                           <div>
                             <label className="text-[10px] text-zinc-500">{tIce("confidence")}</label>
-                            <input
-                              type="number"
-                              min={1}
-                              max={10}
-                              step={0.1}
+                            <select
                               value={iceConfidence ?? ""}
                               onChange={(e) => {
-                                const v = e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null;
+                                const v = e.target.value ? Number(e.target.value) : null;
                                 handleIceChange(iceImpact, v, iceEase);
                               }}
-                              placeholder="—"
                               className="mt-0.5 w-full px-2 py-1 rounded text-xs bg-zinc-700 border border-zinc-600 text-zinc-200"
-                            />
+                            >
+                              <option value="">—</option>
+                              {ICE_VALUES.map((n) => (
+                                <option key={n} value={n}>{tIce(scoreToLevel(n, false))}</option>
+                              ))}
+                            </select>
                           </div>
                           <div>
                             <label className="text-[10px] text-zinc-500">{tIce("ease")}</label>
-                            <input
-                              type="number"
-                              min={1}
-                              max={10}
-                              step={0.1}
+                            <select
                               value={iceEase ?? ""}
                               onChange={(e) => {
-                                const v = e.target.value ? Math.round(Number(e.target.value) * 10) / 10 : null;
+                                const v = e.target.value ? Number(e.target.value) : null;
                                 handleIceChange(iceImpact, iceConfidence, v);
                               }}
-                              placeholder="—"
                               className="mt-0.5 w-full px-2 py-1 rounded text-xs bg-zinc-700 border border-zinc-600 text-zinc-200"
-                            />
+                            >
+                              <option value="">—</option>
+                              {ICE_VALUES.map((n) => (
+                                <option key={n} value={n}>{tIce(scoreToLevel(n, true))}</option>
+                              ))}
+                            </select>
                           </div>
                         </div>
                       </div>

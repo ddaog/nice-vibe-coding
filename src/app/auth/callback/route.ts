@@ -41,7 +41,7 @@ export async function GET(request: Request) {
               console.error("[auth/callback] DB upsert failed:", upsertErr);
               repos = null;
             } else {
-              console.log("[auth/callback] Stored", repos.length, "repos in DB");
+              console.log("[auth/callback] Stored", repos?.length ?? 0, "repos in DB");
             }
           }
         } catch (e) {

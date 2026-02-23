@@ -20,7 +20,19 @@ export interface Project {
   status_note?: string | null;
 }
 
-/** ICE 점수: 1–10, 소수점 한 자리까지 */
+/** 5단계 점수: 매우낮음 2, 낮음 4, 보통 6, 높음 8, 매우높음 10 */
+export const ICE_VALUES = [2, 4, 6, 8, 10] as const;
+export type IceValue = (typeof ICE_VALUES)[number];
+
+/** 평균을 가장 가까운 ICE 값(2,4,6,8,10)으로 반올림 */
+export function roundToNearestIceValue(n: number): IceValue {
+  const nearest = ICE_VALUES.reduce((prev, curr) =>
+    Math.abs(curr - n) < Math.abs(prev - n) ? curr : prev
+  );
+  return nearest;
+}
+
+/** ICE 종합점수: (기대수익+확신+난이도)/3, 소수점 한 자리까지 표기 */
 export function computeIceScore(p: Project): number | null {
   const i = p.ice_impact ?? 0;
   const c = p.ice_confidence ?? 0;
