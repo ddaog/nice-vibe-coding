@@ -1,0 +1,125 @@
+{
+  "common": {
+    "appName": "nice vibe coding",
+    "tagline": "Track your growth. Build in public.",
+    "taglineFull": "Track your growth. Build in public. Share your consistency.",
+    "signIn": "Sign in with Google or GitHub",
+    "share": "Share",
+    "screenshotView": "Screenshot view",
+    "signOut": "Sign out",
+    "backToDashboard": "← Back to dashboard",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGitHub": "Continue with GitHub",
+    "connecting": "Connecting…"
+  },
+  "home": {
+    "signInCta": "Sign in with Google or GitHub"
+  },
+  "dashboard": {
+    "stats": "Stats",
+    "activeDays": "Active days",
+    "currentStreak": "Current streak",
+    "longestStreak": "Longest streak",
+    "mostActiveProject": "Most active project",
+    "contributionGraph": "Contribution Graph",
+    "logActivity": "Log Activity",
+    "projects": "Projects",
+    "activityDistribution": "Activity Distribution",
+    "sortByIce": "Sort by ICE"
+  },
+  "heatmap": {
+    "less": "Less",
+    "more": "More",
+    "prev": "Previous",
+    "next": "Next",
+    "noActivities": "No activities.",
+    "addActivity": "Add activity",
+    "addMoreActivity": "Add more",
+    "activity": "activity",
+    "activities": "activities",
+    "intensity": "intensity"
+  },
+  "logActivity": {
+    "project": "Project",
+    "date": "Date",
+    "type": "Type",
+    "intensity": "Intensity (1-5)",
+    "note": "Note (optional)",
+    "notePlaceholder": "What did you work on?",
+    "log": "Log",
+    "logging": "Logging…",
+    "dev": "Dev",
+    "marketing": "Marketing",
+    "monetization": "Monetization",
+    "analytics": "Analytics",
+    "planning": "Planning"
+  },
+  "createProject": {
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "titlePlaceholder": "Project name",
+    "descriptionPlaceholder": "Brief description",
+    "addProject": "Add Project",
+    "creating": "Creating…",
+    "idea": "Idea",
+    "building": "Building",
+    "blocked": "Blocked",
+    "launched": "Launched"
+  },
+  "projectCard": {
+    "projectTitle": "Project title",
+    "description": "Description",
+    "statusNotePlaceholder": "Status note (max 200 chars)",
+    "statusNoteAdd": "Add status note…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "logActivity": "Log activity",
+    "deleteConfirm": "Delete this project?",
+    "iceScores": "ICE Priority",
+    "iceTooltip": "5 levels (2–10) for Expected Revenue, Confidence, Ease. The closer ICE is to 10, the better the project to try first."
+  },
+  "ice": {
+    "impact": "Expected Revenue",
+    "confidence": "Confidence",
+    "ease": "Ease",
+    "tooltip": "ICE Priority: Score projects 1–10 on Expected Revenue, Confidence, and Ease. Score = (Expected Revenue + Confidence + Ease) ÷ 3",
+    "veryHigh": "Very High",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "veryLow": "Very Low"
+  },
+  "share": {
+    "activeDays": "Active days",
+    "currentStreak": "Current streak",
+    "taglines": {
+      "buildingInPublic": "Building in Public",
+      "consistency": "Consistency > Motivation",
+      "shipDaily": "Ship daily. Grow daily.",
+      "progress": "Progress, not perfection."
+    }
+  },
+  "locale": {
+    "ko": "한국어",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "importGitHub": {
+    "importFromGitHub": "Import from GitHub",
+    "title": "Import from GitHub",
+    "githubRequired": "Sign in with GitHub to import your repositories.",
+    "signInWithGitHub": "Sign in with GitHub",
+    "fetchFailed": "Failed to fetch repositories.",
+    "importFailed": "Failed to import.",
+    "loading": "Loading repositories…",
+    "selectAll": "Select all",
+    "selectNone": "Select none",
+    "cancel": "Cancel",
+    "import": "Import {count}",
+    "importing": "Importing…",
+    "imported": "Imported {count} project(s)."
+  }
+}

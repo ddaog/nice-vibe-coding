@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# nice vibe coding
 
-## Getting Started
+A growth tracking service for solo builders and vibe coders. Track daily progress across multiple projects with a GitHub Contribution Graph-style visualization.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js** (App Router)
+- **Supabase** (DB + Auth)
+- **TailwindCSS**
+- **Vercel** (deployment)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone and install**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. **Supabase**
 
-To learn more about Next.js, take a look at the following resources:
+   - Create a project at [supabase.com](https://supabase.com)
+   - Run the migration in `supabase/migrations/001_initial_schema.sql` via the SQL Editor
+   - Enable Google & GitHub in Authentication → Providers (set Client ID/Secret). GitHub `repo` scope is requested automatically on sign-in.
+   - Add redirect URL: `http://localhost:3001/auth/callback` (and your production URL)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Environment**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   cp .env.example .env.local
+   ```
 
-## Deploy on Vercel
+   Fill in:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SITE_URL` (e.g. `http://localhost:3001`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run**
+
+   ```bash
+   npm run dev
+   ```
+
+## Features
+
+- **Auth** – Google & GitHub login via Supabase OAuth
+- **Projects** – Create, edit, delete projects (idea / building / blocked / launched)
+- **Activity log** – Log daily activity per project (type, intensity 1–3)
+- **Heatmap** – Yearly contribution graph
+- **Share view** – Minimal UI for screenshots (use `/share?screenshot=1` to hide nav)
+
+## Future Scalability
+
+- **Public profiles** – Shareable URLs like `/u/username` with optional privacy
+- **Activity filters** – Filter heatmap by project or activity type in the UI
+- **Streak reminders** – Email/push when streak is at risk
+- **Export** – CSV/JSON export of activities
+- **Rate limits** – Supabase edge functions for high-traffic share pages
