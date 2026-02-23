@@ -22,7 +22,7 @@ A growth tracking service for solo builders and vibe coders. Track daily progres
    - Create a project at [supabase.com](https://supabase.com)
    - Run the migration in `supabase/migrations/001_initial_schema.sql` via the SQL Editor
    - Enable Google & GitHub in Authentication → Providers (set Client ID/Secret). GitHub `repo` scope is requested automatically on sign-in.
-   - Add redirect URL: `http://localhost:3001/auth/callback` (and your production URL)
+   - Add redirect URL: `http://localhost:3001/auth/callback` (로컬), `https://nice-vibe-coding.vercel.app/auth/callback` (프로덕션)
 
 3. **Environment**
 
@@ -34,9 +34,11 @@ A growth tracking service for solo builders and vibe coders. Track daily progres
 
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_SITE_URL` (e.g. `http://localhost:3001`)
+   - `NEXT_PUBLIC_SITE_URL` (로컬: `http://localhost:3001`, 프로덕션: `https://nice-vibe-coding.vercel.app`)
 
-4. **Run**
+4. **Vercel 배포 시** Project Settings → Environment Variables에 `NEXT_PUBLIC_SITE_URL` = `https://nice-vibe-coding.vercel.app` 추가
+
+5. **Run**
 
    ```bash
    npm run dev
