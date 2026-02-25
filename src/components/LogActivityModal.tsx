@@ -63,7 +63,7 @@ export function LogActivityModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm"
         onClick={onClose}
@@ -77,7 +77,7 @@ export function LogActivityModal({
       >
         <div className="flex items-center justify-between p-4 border-b border-zinc-800">
           <h2 id="log-activity-modal-title" className="text-lg font-semibold text-zinc-100">
-            {t("logActivity")}
+            {t("modalTitle")}
           </h2>
           <button
             type="button"

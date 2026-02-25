@@ -18,16 +18,19 @@ export function ProjectViewToggle({ layout }: { layout?: string }) {
       localStorage.setItem(STORAGE_KEY_LAYOUT, value);
     }
     const params = new URLSearchParams(searchParams.toString());
-    if (value === "grid") params.delete("layout");
-    else params.set("layout", value);
-    router.push(`/dashboard?${params.toString()}`);
+    params.set("layout", value);
+    router.replace(`/dashboard?${params.toString()}`);
   };
 
   return (
-    <div className="flex rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800/80">
+    <div className="flex rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800/80 isolate">
       <button
         type="button"
-        onClick={() => handleChange("grid")}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleChange("grid");
+        }}
         title={t("viewGrid")}
         className={`p-1.5 transition-colors ${
           current === "grid"
@@ -41,7 +44,11 @@ export function ProjectViewToggle({ layout }: { layout?: string }) {
       </button>
       <button
         type="button"
-        onClick={() => handleChange("list")}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleChange("list");
+        }}
         title={t("viewList")}
         className={`p-1.5 transition-colors ${
           current === "list"

@@ -47,6 +47,7 @@
     "addMoreActivity": "활동 추가"
   },
   "logActivity": {
+    "modalTitle": "활동 기록",
     "project": "프로젝트",
     "date": "날짜",
     "type": "유형",

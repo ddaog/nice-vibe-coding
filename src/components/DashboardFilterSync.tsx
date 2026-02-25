@@ -30,8 +30,8 @@ export function DashboardFilterSync() {
       params.set("projectFilter", localFilter);
       changed = true;
     }
-    if (!layout && localLayout === "list") {
-      params.set("layout", "list");
+    if (!layout && localLayout && (localLayout === "grid" || localLayout === "list")) {
+      params.set("layout", localLayout);
       changed = true;
     }
 

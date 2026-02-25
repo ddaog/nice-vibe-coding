@@ -179,8 +179,8 @@ export default async function DashboardPage({
           <LogActivityForm projects={projects} initialDate={initialDate} initialProjectId={initialProjectId} initialType={initialType} />
         </section>
 
-        <section>
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <section className="relative z-0">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4 relative z-20">
             <h2 className="text-xl font-semibold text-zinc-100">
               {t("projects")}
             </h2>

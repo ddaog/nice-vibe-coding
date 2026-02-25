@@ -250,17 +250,20 @@ export function ProjectCard({
               >
                 {t("logActivity")}
               </button>
-              {logActivityModalOpen && (
-                <LogActivityModal
-                  projectId={project.id}
-                  projectTitle={project.title}
-                  onClose={() => setLogActivityModalOpen(false)}
-                  onSuccess={() => {
-                    router.refresh();
-                    onUpdate?.();
-                  }}
-                />
-              )}
+              {logActivityModalOpen &&
+                typeof document !== "undefined" &&
+                createPortal(
+                  <LogActivityModal
+                    projectId={project.id}
+                    projectTitle={project.title}
+                    onClose={() => setLogActivityModalOpen(false)}
+                    onSuccess={() => {
+                      router.refresh();
+                      onUpdate?.();
+                    }}
+                  />,
+                  document.body
+                )}
             </div>
           </div>
           {/* 상태 메모: 빈 경우 밑줄 텍스트, 입력 중이면 input+체크, 있으면 텍스트 표시 */}

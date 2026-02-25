@@ -47,6 +47,7 @@
     "intensity": "強度"
   },
   "logActivity": {
+    "modalTitle": "活動を記録",
     "project": "プロジェクト",
     "date": "日付",
     "type": "タイプ",

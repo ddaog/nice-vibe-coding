@@ -47,6 +47,7 @@
     "intensity": "intensity"
   },
   "logActivity": {
+    "modalTitle": "Log activity",
     "project": "Project",
     "date": "Date",
     "type": "Type",
