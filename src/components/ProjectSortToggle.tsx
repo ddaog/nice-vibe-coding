@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
+const STORAGE_KEY_SORT = "vibe-coder-sort";
 const SORT_OPTIONS = [
   { value: "ice", labelKey: "sortByIce" },
   { value: "recent", labelKey: "sortByRecent" },
@@ -13,11 +14,14 @@ export function ProjectSortToggle({ sort }: { sort?: string }) {
   const t = useTranslations("dashboard");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const current = (sort === "ice" || sort === "recent" || sort === "active") ? sort : "recent";
+  const current = (sort === "ice" || sort === "recent" || sort === "active") ? sort : "ice";
 
   const handleChange = (value: string) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY_SORT, value);
+    }
     const params = new URLSearchParams(searchParams.toString());
-    if (value === "recent") params.delete("sort");
+    if (value === "ice") params.delete("sort");
     else params.set("sort", value);
     router.push(`/dashboard?${params.toString()}`);
   };

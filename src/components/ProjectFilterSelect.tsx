@@ -20,6 +20,9 @@ export function ProjectFilterSelect({
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const v = e.target.value;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("vibe-coder-projectFilter", v);
+    }
     const params = new URLSearchParams(otherParams || "");
     if (v) params.set("projectFilter", v);
     else params.delete("projectFilter");

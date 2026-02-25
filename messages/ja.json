@@ -13,7 +13,9 @@
     "connecting": "接続中…"
   },
   "home": {
-    "signInCta": "GoogleまたはGitHubでログイン"
+    "signInCta": "GoogleまたはGitHubでログイン",
+    "heatmapPreview": "あなたの成長を可視化",
+    "footerTagline": "公開でビルド · 継続を共有"
   },
   "dashboard": {
     "stats": "統計",
@@ -28,7 +30,9 @@
     "sortByIce": "ICE順",
     "sortByRecent": "最近の活動順",
     "sortByActive": "活動数順",
-    "allProjects": "全プロジェクト"
+    "allProjects": "全プロジェクト",
+    "viewGrid": "グリッド表示",
+    "viewList": "リスト表示"
   },
   "heatmap": {
     "less": "少ない",

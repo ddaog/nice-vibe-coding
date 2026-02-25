@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import type { Project, Activity } from "@/types";
 import type { ProjectStatus } from "@/types";
 import { computeIceScore, ICE_VALUES, roundToNearestIceValue, scoreToLevel } from "@/types";
+import { LogActivityModal } from "@/components/LogActivityModal";
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
   idea: "bg-zinc-600",
@@ -47,6 +48,7 @@ export function ProjectCard({
   const [statusNote, setStatusNote] = useState(project.status_note ?? "");
   const [statusNoteEditing, setStatusNoteEditing] = useState(false);
   const [iceOpen, setIceOpen] = useState(false);
+  const [logActivityModalOpen, setLogActivityModalOpen] = useState(false);
   const iceTriggerRef = useRef<HTMLButtonElement>(null);
   const statusNoteInputRef = useRef<HTMLInputElement>(null);
 
@@ -232,6 +234,7 @@ export function ProjectCard({
         </div>
       ) : (
         <>
+          {/* 우상단: 제목 + 활동 기록 버튼 */}
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="font-medium text-zinc-100">{project.title}</h3>
@@ -239,8 +242,115 @@ export function ProjectCard({
                 <p className="text-sm text-zinc-400 mt-0.5">{project.description}</p>
               )}
             </div>
-            <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
-              {/* ICE - 클릭 시 드롭다운에서 각 항목 선택 */}
+            <div className="shrink-0">
+              <button
+                type="button"
+                onClick={() => setLogActivityModalOpen(true)}
+                className="text-xs px-2 py-1 rounded bg-emerald-600/80 hover:bg-emerald-500/80 text-white"
+              >
+                {t("logActivity")}
+              </button>
+              {logActivityModalOpen && (
+                <LogActivityModal
+                  projectId={project.id}
+                  projectTitle={project.title}
+                  onClose={() => setLogActivityModalOpen(false)}
+                  onSuccess={() => {
+                    router.refresh();
+                    onUpdate?.();
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          {/* 상태 메모: 빈 경우 밑줄 텍스트, 입력 중이면 input+체크, 있으면 텍스트 표시 */}
+          {statusNoteEditing ? (
+            <div className="flex items-center gap-2 mt-2">
+              <input
+                ref={statusNoteInputRef}
+                value={statusNote}
+                onChange={(e) => setStatusNote(e.target.value.slice(0, 200))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleStatusNoteSave();
+                  if (e.key === "Escape") {
+                    setStatusNote(project.status_note ?? "");
+                    setStatusNoteEditing(false);
+                  }
+                }}
+                maxLength={200}
+                className="flex-1 px-2 py-1 rounded text-xs bg-zinc-800/60 border border-zinc-700/50 text-zinc-400 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 focus:border-zinc-600"
+                placeholder={t("statusNotePlaceholder")}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={handleStatusNoteSave}
+                className="p-1.5 rounded text-emerald-500 hover:bg-emerald-500/20 transition-colors"
+                title={t("save")}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+            </div>
+          ) : statusNote.trim() ? (
+            <p
+              onClick={() => setStatusNoteEditing(true)}
+              className="mt-2 text-xs text-zinc-500 cursor-pointer hover:text-zinc-400"
+            >
+              {statusNote}
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setStatusNoteEditing(true);
+              }}
+              className="mt-2 text-xs text-zinc-600 hover:text-zinc-500 underline underline-offset-2"
+            >
+              {t("statusNoteAdd")}
+            </button>
+          )}
+          {/* 최근 활동 (4주) */}
+          <div className="mt-3 pt-3 border-t border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-xs text-zinc-500">{t("recentActivity")}</span>
+              <span className="text-[10px] text-zinc-600">({t("recentActivity4w")})</span>
+            </div>
+            <div className="flex gap-0.5 flex-wrap">
+              {Array.from({ length: rangeDays }, (_, i) => {
+                const d = daysAgo(rangeDays - 1 - i);
+                const hasActivity = recentActivityDates.has(d);
+                return (
+                  <div
+                    key={d}
+                    className={`w-2.5 h-2.5 rounded-sm shrink-0 ${
+                      hasActivity ? "bg-emerald-500/80" : "bg-zinc-800/80"
+                    }`}
+                    title={`${d}${hasActivity ? " ✓" : ""}`}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          {/* 하단: 좌하단 수정/삭제, 우하단 ICE/상태 */}
+          <div className="mt-3 pt-3 border-t border-zinc-800/50 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setEditing(true)}
+                className="text-xs text-zinc-400 hover:text-zinc-300"
+              >
+                {t("edit")}
+              </button>
+              <button
+                onClick={handleDelete}
+                className="text-xs text-red-400 hover:text-red-300"
+              >
+                {t("delete")}
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* ICE */}
               <div className="relative">
                 {(() => {
                   const iceScore = computeIceScore({
@@ -363,100 +473,6 @@ export function ProjectCard({
                 ))}
               </select>
             </div>
-          </div>
-          {/* 상태 메모: 빈 경우 밑줄 텍스트, 입력 중이면 input+체크, 있으면 텍스트 표시 */}
-          {statusNoteEditing ? (
-            <div className="flex items-center gap-2 mt-2">
-              <input
-                ref={statusNoteInputRef}
-                value={statusNote}
-                onChange={(e) => setStatusNote(e.target.value.slice(0, 200))}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleStatusNoteSave();
-                  if (e.key === "Escape") {
-                    setStatusNote(project.status_note ?? "");
-                    setStatusNoteEditing(false);
-                  }
-                }}
-                maxLength={200}
-                className="flex-1 px-2 py-1 rounded text-xs bg-zinc-800/60 border border-zinc-700/50 text-zinc-400 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 focus:border-zinc-600"
-                placeholder={t("statusNotePlaceholder")}
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={handleStatusNoteSave}
-                className="p-1.5 rounded text-emerald-500 hover:bg-emerald-500/20 transition-colors"
-                title={t("save")}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </button>
-            </div>
-          ) : statusNote.trim() ? (
-            <p
-              onClick={() => setStatusNoteEditing(true)}
-              className="mt-2 text-xs text-zinc-500 cursor-pointer hover:text-zinc-400"
-            >
-              {statusNote}
-            </p>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                setStatusNoteEditing(true);
-              }}
-              className="mt-2 text-xs text-zinc-600 hover:text-zinc-500 underline underline-offset-2"
-            >
-              {t("statusNoteAdd")}
-            </button>
-          )}
-          {/* 최근 활동 (4주) */}
-          <div className="mt-3 pt-3 border-t border-zinc-800/50">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-xs text-zinc-500">{t("recentActivity")}</span>
-              <span className="text-[10px] text-zinc-600">({t("recentActivity4w")})</span>
-            </div>
-            <div className="flex gap-0.5 flex-wrap">
-              {Array.from({ length: rangeDays }, (_, i) => {
-                const d = daysAgo(rangeDays - 1 - i);
-                const hasActivity = recentActivityDates.has(d);
-                return (
-                  <div
-                    key={d}
-                    className={`w-2.5 h-2.5 rounded-sm shrink-0 ${
-                      hasActivity ? "bg-emerald-500/80" : "bg-zinc-800/80"
-                    }`}
-                    title={`${d}${hasActivity ? " ✓" : ""}`}
-                  />
-                );
-              })}
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 mt-3">
-            <button
-              type="button"
-              onClick={() => {
-                const today = new Date().toISOString().slice(0, 10);
-                router.push(`/dashboard?date=${today}&project=${project.id}`);
-              }}
-              className="text-xs px-2 py-1 rounded bg-emerald-600/80 hover:bg-emerald-500/80 text-white"
-            >
-              {t("logActivity")}
-            </button>
-            <button
-              onClick={() => setEditing(true)}
-              className="text-xs text-zinc-400 hover:text-zinc-300"
-            >
-              {t("edit")}
-            </button>
-            <button
-              onClick={handleDelete}
-              className="text-xs text-red-400 hover:text-red-300"
-            >
-              {t("delete")}
-            </button>
           </div>
         </>
       )}

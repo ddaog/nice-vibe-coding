@@ -19,11 +19,13 @@ export function LogActivityForm({
   onSuccess,
   initialDate,
   initialProjectId,
+  initialType,
 }: {
   projects: Project[];
   onSuccess?: () => void;
   initialDate?: string;
   initialProjectId?: string;
+  initialType?: ActivityType;
 }) {
   const t = useTranslations("logActivity");
   const [projectId, setProjectId] = useState(
@@ -32,7 +34,7 @@ export function LogActivityForm({
   const [date, setDate] = useState(
     initialDate ?? new Date().toISOString().slice(0, 10)
   );
-  const [type, setType] = useState<ActivityType>("dev");
+  const [type, setType] = useState<ActivityType>(initialType ?? "dev");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +44,9 @@ export function LogActivityForm({
   useEffect(() => {
     if (initialProjectId && projects.some((p) => p.id === initialProjectId)) setProjectId(initialProjectId);
   }, [initialProjectId, projects]);
+  useEffect(() => {
+    if (initialType) setType(initialType);
+  }, [initialType]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

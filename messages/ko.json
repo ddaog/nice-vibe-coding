@@ -13,7 +13,9 @@
     "connecting": "연결 중…"
   },
   "home": {
-    "signInCta": "Google 또는 GitHub로 로그인"
+    "signInCta": "Google 또는 GitHub로 로그인",
+    "heatmapPreview": "당신의 성장, 시각화",
+    "footerTagline": "공개적으로 빌드 · 꾸준함을 공유"
   },
   "dashboard": {
     "stats": "통계",
@@ -28,7 +30,9 @@
     "sortByIce": "ICE 순",
     "sortByRecent": "최근 활동순",
     "sortByActive": "최다 활동순",
-    "allProjects": "전체 프로젝트"
+    "allProjects": "전체 프로젝트",
+    "viewGrid": "그리드 보기",
+    "viewList": "리스트 보기"
   },
   "heatmap": {
     "less": "적음",

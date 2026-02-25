@@ -18,20 +18,26 @@ import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { ImportFromGitHub } from "@/components/ImportFromGitHub";
 import { ProjectSortToggle } from "@/components/ProjectSortToggle";
 import { ProjectFilterSelect } from "@/components/ProjectFilterSelect";
+import { ProjectViewToggle } from "@/components/ProjectViewToggle";
+import { DashboardFilterSync } from "@/components/DashboardFilterSync";
 import Link from "next/link";
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string; projectFilter?: string }>;
+  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string; projectFilter?: string; type?: string; layout?: string }>;
 }) {
   const params = await searchParams;
   const initialDate = params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : undefined;
   const initialProjectId = params.project ?? undefined;
+  const validTypes = ["dev", "marketing", "monetization", "analytics", "planning"] as const;
+  const initialType = params.type && validTypes.includes(params.type as (typeof validTypes)[number])
+    ? (params.type as (typeof validTypes)[number])
+    : undefined;
   const viewOffset = parseInt(params.view ?? "0", 10) || 0;
   const sortParam = (params.sort === "ice" || params.sort === "recent" || params.sort === "active")
     ? params.sort
-    : "recent";
+    : "ice";
   const projectFilter = params.projectFilter ?? undefined;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -61,6 +67,7 @@ export default async function DashboardPage({
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <DashboardFilterSync />
       {(initialDate || initialProjectId) && <ScrollToLogForm trigger={initialDate ?? initialProjectId ?? ""} />}
       <header className="border-b border-zinc-800/50 backdrop-blur-sm sticky top-0 z-10 bg-zinc-950/80">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -169,7 +176,7 @@ export default async function DashboardPage({
           <h2 className="text-xl font-semibold text-zinc-100 mb-4">
             {t("logActivity")}
           </h2>
-          <LogActivityForm projects={projects} initialDate={initialDate} initialProjectId={initialProjectId} />
+          <LogActivityForm projects={projects} initialDate={initialDate} initialProjectId={initialProjectId} initialType={initialType} />
         </section>
 
         <section>
@@ -178,11 +185,18 @@ export default async function DashboardPage({
               {t("projects")}
             </h2>
             <div className="flex items-center gap-2">
+              <ProjectViewToggle layout={params.layout} />
               <ProjectSortToggle sort={params.sort} />
               <ImportFromGitHub initialGitHubImport={params.github_import === "1"} />
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 overflow-visible">
+          <div
+            className={
+              params.layout === "list"
+                ? "flex flex-col gap-4 overflow-visible"
+                : "grid gap-4 sm:grid-cols-2 overflow-visible"
+            }
+          >
             {projects.map((p) => (
               <ProjectCard
                 key={p.id}

@@ -13,7 +13,9 @@
     "connecting": "Connecting…"
   },
   "home": {
-    "signInCta": "Sign in with Google or GitHub"
+    "signInCta": "Sign in with Google or GitHub",
+    "heatmapPreview": "Your growth, visualized",
+    "footerTagline": "Build in public · Share your consistency"
   },
   "dashboard": {
     "stats": "Stats",
@@ -28,7 +30,9 @@
     "sortByIce": "By ICE",
     "sortByRecent": "Recent activity",
     "sortByActive": "Most active",
-    "allProjects": "All projects"
+    "allProjects": "All projects",
+    "viewGrid": "Grid view",
+    "viewList": "List view"
   },
   "heatmap": {
     "less": "Less",
