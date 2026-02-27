@@ -32,7 +32,10 @@
     "sortByActive": "Most active",
     "allProjects": "All projects",
     "viewGrid": "Grid view",
-    "viewList": "List view"
+    "viewList": "List view",
+    "viewActivityList": "View as list",
+    "closeList": "Close",
+    "activityListTitle": "Activity log"
   },
   "heatmap": {
     "less": "Less",

@@ -20,12 +20,14 @@ import { ProjectSortToggle } from "@/components/ProjectSortToggle";
 import { ProjectFilterSelect } from "@/components/ProjectFilterSelect";
 import { ProjectViewToggle } from "@/components/ProjectViewToggle";
 import { DashboardFilterSync } from "@/components/DashboardFilterSync";
+import { ActivityListToggle } from "@/components/ActivityListToggle";
+import { ActivityListSection } from "@/components/ActivityListSection";
 import Link from "next/link";
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string; projectFilter?: string; type?: string; layout?: string }>;
+  searchParams: Promise<{ github_import?: string; sort?: string; date?: string; view?: string; project?: string; projectFilter?: string; type?: string; layout?: string; activityList?: string }>;
 }) {
   const params = await searchParams;
   const initialDate = params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? params.date : undefined;
@@ -140,6 +142,7 @@ export default async function DashboardPage({
               {t("contributionGraph")}
             </h2>
             <div className="flex flex-wrap items-center gap-2">
+              <ActivityListToggle showList={params.activityList === "1"} />
               <ProjectFilterSelect
                 projects={projects}
                 projectTitles={projectTitles}
@@ -147,6 +150,7 @@ export default async function DashboardPage({
                 otherParams={[
                   sortParam !== "recent" && `sort=${sortParam}`,
                   initialDate && `date=${initialDate}`,
+                  params.activityList === "1" && "activityList=1",
                 ].filter(Boolean).join("&")}
               />
               <HeatmapNav
@@ -159,6 +163,7 @@ export default async function DashboardPage({
                   sortParam !== "recent" && `sort=${sortParam}`,
                   initialDate && `date=${initialDate}`,
                   projectFilter && `projectFilter=${projectFilter}`,
+                  params.activityList === "1" && "activityList=1",
                 ].filter(Boolean).join("&")}
               />
             </div>
@@ -170,6 +175,12 @@ export default async function DashboardPage({
             startDate={start}
             endDate={end}
           />
+          {params.activityList === "1" && (
+            <ActivityListSection
+              activities={filteredActivities}
+              projectTitles={projectTitles}
+            />
+          )}
         </section>
 
         <section id="log-activity">

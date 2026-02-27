@@ -32,7 +32,10 @@
     "sortByActive": "活動数順",
     "allProjects": "全プロジェクト",
     "viewGrid": "グリッド表示",
-    "viewList": "リスト表示"
+    "viewList": "リスト表示",
+    "viewActivityList": "リストで表示",
+    "closeList": "閉じる",
+    "activityListTitle": "活動記録"
   },
   "heatmap": {
     "less": "少ない",

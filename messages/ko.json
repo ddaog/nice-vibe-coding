@@ -32,7 +32,10 @@
     "sortByActive": "최다 활동순",
     "allProjects": "전체 프로젝트",
     "viewGrid": "그리드 보기",
-    "viewList": "리스트 보기"
+    "viewList": "리스트 보기",
+    "viewActivityList": "리스트로 보기",
+    "closeList": "닫기",
+    "activityListTitle": "활동 기록"
   },
   "heatmap": {
     "less": "적음",
